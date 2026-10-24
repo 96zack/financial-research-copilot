@@ -1,4 +1,3 @@
-
 from fastapi.testclient import TestClient
 
 from financial_research_copilot.api.main import app
@@ -22,9 +21,7 @@ def test_ask_valid_question():
     assert response.status_code == 200
 
     data = response.json()
-    assert data["answer"] == (
-        "Mock answer for: What was Apple's revenue?"
-    )
+    assert data["answer"] == ("Mock answer for: What was Apple's revenue?")
     assert data["sources"] == []
 
 
