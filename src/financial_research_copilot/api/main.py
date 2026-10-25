@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+import os
 
 from financial_research_copilot.api.schemas import (
     AskRequest,
