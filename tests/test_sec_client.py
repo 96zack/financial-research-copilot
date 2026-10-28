@@ -4,6 +4,7 @@ import httpx
 import pytest
 
 from financial_research_copilot.ingestion.sec_client import (
+    download_filing,
     get_company_submissions,
     get_latest_filing,
 )
@@ -86,5 +87,45 @@ def test_get_company_submissions_http_error(mock_get):
     with pytest.raises(httpx.HTTPStatusError):
         get_company_submissions(
             cik="320193",
+            user_agent="TestApp test@example.com",
+        )
+
+
+@patch("financial_research_copilot.ingestion.sec_client.httpx.get")
+def test_download_filing_success(mock_get):
+    fake_response = Mock()
+    fake_response.text = "<html><body>Apple 10-K</body></html>"
+    mock_get.return_value = fake_response
+
+    url = "https://www.sec.gov/Archives/edgar/data/example.htm"
+
+    result = download_filing(
+        url=url,
+        user_agent="TestApp test@example.com",
+    )
+
+    assert result == "<html><body>Apple 10-K</body></html>"
+
+    mock_get.assert_called_once_with(
+        url,
+        headers={"User-Agent": "TestApp test@example.com"},
+        timeout=30.0,
+        follow_redirects=True,
+    )
+
+
+@patch("financial_research_copilot.ingestion.sec_client.httpx.get")
+def test_download_filing_http_error(mock_get):
+    url = "https://www.sec.gov/Archives/edgar/data/example.htm"
+
+    request = httpx.Request("GET", url)
+    response = httpx.Response(status_code=403, request=request)
+
+    mock_get.return_value = response
+
+    # TODO: Verify download_filing() raises HTTPStatusError
+    with pytest.raises(httpx.HTTPStatusError):
+        download_filing(
+            url=url,
             user_agent="TestApp test@example.com",
         )

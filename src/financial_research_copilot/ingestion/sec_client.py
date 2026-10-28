@@ -3,6 +3,7 @@ from datetime import date
 import httpx
 
 SEC_BASE_URL = "https://data.sec.gov/submissions"
+SEC_ARCHIVES_BASE_URL = "https://www.sec.gov/Archives/edgar/data"
 
 
 def get_company_submissions(cik: str, user_agent: str) -> dict:
@@ -48,3 +49,30 @@ def get_latest_filing(submissions: dict, form_type: str) -> dict:
     }
 
     return result
+
+
+def build_filing_url(
+    cik: str,
+    accession_number: str,
+    primary_document: str,
+) -> str:
+
+    normalized_cik = str(int(cik))
+    normalized_accession = accession_number.replace("-", "")
+
+    return (
+        f"{SEC_ARCHIVES_BASE_URL}/"
+        f"{normalized_cik}/{normalized_accession}/{primary_document}"
+    )
+
+
+def download_filing(url: str, user_agent: str) -> str:
+    response = httpx.get(
+        url,
+        headers={"User-Agent": user_agent},
+        timeout=30.0,
+        follow_redirects=True,
+    )
+
+    response.raise_for_status()
+    return response.text
