@@ -8,6 +8,9 @@ from financial_research_copilot.ingestion.sec_client import (
     get_company_submissions,
     get_latest_filing,
 )
+from financial_research_copilot.processing.html_parser import (
+    extract_filing_text,
+)
 
 SAMPLE_SUBMISSIONS = {
     "filings": {
@@ -129,3 +132,46 @@ def test_download_filing_http_error(mock_get):
             url=url,
             user_agent="TestApp test@example.com",
         )
+
+
+def test_remove_xbrl_header_preserve_visible_facts():
+    html = """
+    <html>
+        <body>
+            <ix:header>
+                <ix:hidden>
+                    <ix:nonfraction>999999</ix:nonfraction>
+                </ix:hidden>
+                <ix:resources>
+                    http://fasb.org/us-gaap/2025
+                </ix:resources>
+            </ix:header>
+
+            <p>
+                Net sales were
+                <ix:nonfraction>391,035</ix:nonfraction>
+                million.
+            </p>
+        </body>
+    </html>
+    """
+
+    result = extract_filing_text(html)
+
+    assert "999999" not in result
+    assert "http://fasb.org" not in result
+    assert "391,035" in result
+
+
+def test_preserve_inline_text():
+    html = """
+    <p>
+        For the fiscal year ended
+        <span>September 27</span>, 2025
+    </p>
+    """
+
+    result = extract_filing_text(html)
+
+    assert "September 27" in result
+    assert "2025" in result
