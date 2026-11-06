@@ -43,3 +43,19 @@ def extract_filing_text(html: str) -> str:
             lines.append(line)
 
     return "\n".join(lines)
+
+
+def remove_page_footers(text: str) -> str:
+    pattern = r"^.+? \| \d{4} Form 10-K \| \d+$"
+
+    cleaned_lines = []
+
+    for line in text.splitlines():
+        # Check whether the line matches the footer pattern
+        if re.fullmatch(pattern, line.strip()):
+            continue
+
+        # Keep the line if it is not a footer
+        cleaned_lines.append(line)
+
+    return "\n".join(cleaned_lines)
