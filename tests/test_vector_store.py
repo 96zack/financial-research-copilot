@@ -28,7 +28,7 @@ def test_vector_store_round_trip(tmp_path):
         form="10-K",
         filing_date="2026-09-26",
         source_url="https://example.com/apple-10k",
-        chunk_index=1
+        chunk_index=1,
     )
 
     # 4. Create two sample chunks
@@ -73,7 +73,7 @@ def test_model_mismatch(tmp_path):
         form="10-K",
         filing_date="2026-09-26",
         source_url="https://example.com/apple-10k",
-        chunk_index=1
+        chunk_index=1,
     )
 
     # Reuse one valid DocumentChunk from your round-trip test.
@@ -104,7 +104,7 @@ def test_count_mismatch(tmp_path):
         form="10-K",
         filing_date="2026-09-26",
         source_url="https://example.com/apple-10k",
-        chunk_index=1
+        chunk_index=1,
     )
 
     # One valid chunk, but two embeddings.

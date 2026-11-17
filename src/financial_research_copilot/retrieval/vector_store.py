@@ -45,7 +45,7 @@ class VectorStore:
         output_json = {
             "model_name": model_name,
             "chunk_count": len(chunks),
-            "embedding_dimension": embeddings.shape[1]
+            "embedding_dimension": embeddings.shape[1],
         }
 
         (self.directory / "manifest.json").write_text(
@@ -86,10 +86,7 @@ class VectorStore:
 
         # TODO 5: Reconstruct DocumentChunk objects
         # using DocumentChunk.model_validate()
-        chunks_load = [
-            DocumentChunk.model_validate(item)
-            for item in chunk_data_load
-        ]
+        chunks_load = [DocumentChunk.model_validate(item) for item in chunk_data_load]
 
         # TODO 6: Validate:
         # - embeddings.ndim == 2
@@ -100,9 +97,9 @@ class VectorStore:
             raise ValueError("Cached embeddings must be a 2D array")
 
         if (
-                embeddings_load.shape[0] != len(chunks_load)
-                or embeddings_load.shape[0] != manifest["chunk_count"]
-                or embeddings_load.shape[1] != manifest["embedding_dimension"]
+            embeddings_load.shape[0] != len(chunks_load)
+            or embeddings_load.shape[0] != manifest["chunk_count"]
+            or embeddings_load.shape[1] != manifest["embedding_dimension"]
         ):
             raise ValueError("Cached embeddings do not match metadata")
 

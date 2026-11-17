@@ -78,9 +78,7 @@ def split_long_paragraph(
                 current = ""
 
             # Split oversized sentence at word boundaries
-            chunks.extend(
-                split_long_sentence(sentence, chunk_size)
-            )
+            chunks.extend(split_long_sentence(sentence, chunk_size))
             continue
 
         # TODO 1 & 2: Accumulate sentences

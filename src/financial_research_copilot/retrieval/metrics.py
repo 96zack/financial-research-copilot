@@ -48,9 +48,10 @@ def reciprocal_rank(
 
     for index, chunk_id in enumerate(retrieved_ids[:k]):
         if chunk_id in relevant_ids:
-            return 1 / (index+1)
+            return 1 / (index + 1)
 
     return 0.0
+
 
 def mean_reciprocal_rank(
     reciprocal_ranks: list[float],

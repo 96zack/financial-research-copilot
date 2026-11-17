@@ -10,12 +10,9 @@ MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 QUESTIONS = {
     "supplier": (
-        "What risks does Apple face from relying on "
-        "a limited number of suppliers?"
+        "What risks does Apple face from relying on a limited number of suppliers?"
     ),
-    "margin": (
-        "What factors could negatively affect Apple's gross margins?"
-    ),
+    "margin": ("What factors could negatively affect Apple's gross margins?"),
     "ai": (
         "What risks does Apple identify related to "
         "artificial intelligence technologies?"
@@ -24,9 +21,7 @@ QUESTIONS = {
 
 
 def main():
-    store = VectorStore(
-        str(PROJECT_ROOT / "data" / "vector_store" / "apple_10k")
-    )
+    store = VectorStore(str(PROJECT_ROOT / "data" / "vector_store" / "apple_10k"))
 
     embeddings, chunks = store.load(MODEL_NAME)
 

@@ -6,9 +6,7 @@ from financial_research_copilot.retrieval.vector_store import VectorStore
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
-store = VectorStore(
-    str(PROJECT_ROOT / "data" / "vector_store" / "apple_10k")
-)
+store = VectorStore(str(PROJECT_ROOT / "data" / "vector_store" / "apple_10k"))
 
 embeddings, chunks = store.load(MODEL_NAME)
 
@@ -26,11 +24,7 @@ for chunk in chunks:
 # TODO 2:
 # Keep only groups containing more than one chunk ID.
 
-duplicates = {
-    text: ids
-    for text, ids in text_to_ids.items()
-    if len(ids) > 1
-}
+duplicates = {text: ids for text, ids in text_to_ids.items() if len(ids) > 1}
 
 # TODO 3:
 # Print:
@@ -41,10 +35,7 @@ duplicates = {
 total_chunks = len(chunks)
 duplicate_groups = len(duplicates)
 
-redundant_chunks = sum(
-    len(ids) - 1
-    for ids in duplicates.values()
-)
+redundant_chunks = sum(len(ids) - 1 for ids in duplicates.values())
 
 print(f"Total chunks: {total_chunks}")
 print(f"Duplicate groups: {duplicate_groups}")

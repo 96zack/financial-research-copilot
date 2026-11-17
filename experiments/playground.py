@@ -16,9 +16,7 @@ print(split_long_sentence("", 10))
 # []
 
 text = (
-    "Apple relies on suppliers. "
-    "Supply shortages increase costs. "
-    "Margins may decline."
+    "Apple relies on suppliers. Supply shortages increase costs. Margins may decline."
 )
 
 print(split_long_paragraph(text, chunk_size=55))

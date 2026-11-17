@@ -15,9 +15,9 @@ store = VectorStore(str(PROJECT_ROOT / "data" / "vector_store" / "apple_10k"))
 model_name = "sentence-transformers/all-MiniLM-L6-v2"
 
 model = SentenceTransformer(
-        "sentence-transformers/all-MiniLM-L6-v2",
-        device="cpu",
-    )
+    "sentence-transformers/all-MiniLM-L6-v2",
+    device="cpu",
+)
 
 start = perf_counter()
 if (Path(store.directory) / "manifest.json").exists():
