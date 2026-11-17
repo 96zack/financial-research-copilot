@@ -5,7 +5,6 @@ from sentence_transformers import SentenceTransformer
 from financial_research_copilot.retrieval.search import top_k_search
 from financial_research_copilot.retrieval.vector_store import VectorStore
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 

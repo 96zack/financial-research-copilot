@@ -70,7 +70,7 @@ def test_paragraph_chunking_oversized():
         chunk_overlap=2,
     )
 
-    assert result == ["AAAA", "BBBBBBBB", "BBBBBB", "CCCC"]
+    assert result == ["AAAA", "BBBBBBBB", "BBBB", "CCCC"]
 
 
 def test_paragraph_chunking_empty():

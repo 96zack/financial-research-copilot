@@ -1,3 +1,21 @@
+### Week 4 — Semantic Retrieval
+
+Implemented a semantic retrieval pipeline for SEC filings using Sentence Transformers (`all-MiniLM-L6-v2`), cosine similarity, top-K ranking, and a persistent vector store.
+
+**Retrieval quality improvements**
+- Added exact-text chunk deduplication, reducing the Apple 10-K corpus from 311 to 305 chunks and eliminating six redundant chunks.
+- Introduced sentence-aware splitting for oversized paragraphs to reduce mid-word fragmentation.
+- Built retrieval evaluation utilities for Precision@K, Recall@K, reciprocal rank, and mean reciprocal rank.
+
+**Evaluation findings**
+- Mean Precision@3 changed from 0.889 to 0.778.
+- MRR@3 changed from 1.000 to 0.833.
+- Exact duplicate count fell from six to zero.
+- AI-risk retrieval remained strong, while gross-margin retrieval revealed that short, semantically similar passages can outrank more informative evidence.
+
+**Limitations and next steps**
+
+Evaluation used three manually labeled questions and top-10 candidate pools. Results are preliminary and do not establish general retrieval performance. Future improvements will investigate chunk context, reranking, and a larger fixed relevance benchmark.
 
 # Financial Research Copilot
 
