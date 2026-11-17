@@ -10,6 +10,9 @@ from financial_research_copilot.processing.chunk_evaluator import (
 from financial_research_copilot.processing.chunker import (
     split_text_by_paragraph,
 )
+from financial_research_copilot.processing.deduplicator import (
+    deduplicate_chunks,
+)
 from financial_research_copilot.processing.html_parser import (
     remove_page_footers,
 )
@@ -38,8 +41,13 @@ def ingest_and_chunk_filing(
     )
     # TODO 4: Convert the strings into DocumentChunk objects
     doc_chunks = build_document_chunks(filing, text_chunks)
+    ## additional dedup
+    doc_chunks = deduplicate_chunks(doc_chunks)
     # TODO 5: Evaluate the text chunks
-    chunk_eva = evaluate_chunks(text_chunks, chunk_size)
+    chunk_eva = evaluate_chunks(
+        [chunk.text for chunk in doc_chunks],
+        chunk_size,
+    )
     # TODO 6: Return filing, structured chunks, and metrics
     return {
         "filing": filing,

@@ -1,3 +1,6 @@
+from financial_research_copilot.processing.sentence_chunker import split_long_paragraph
+
+
 def split_text(
     text: str,
     chunk_size: int = 1000,
@@ -59,7 +62,8 @@ def split_text_by_paragraph(
             if current_chunk:
                 chunks.append(current_chunk)
             # Split oversized paragraph
-            chunks.extend(split_text(paragraph, chunk_size, chunk_overlap))
+            # chunks.extend(split_text(paragraph, chunk_size, chunk_overlap))
+            chunks.extend(split_long_paragraph(paragraph, chunk_size))
             # Reset current_chunk
             current_chunk = ""
 
