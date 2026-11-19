@@ -2,7 +2,9 @@ from pathlib import Path
 
 from sentence_transformers import SentenceTransformer
 
-from financial_research_copilot.generation.rag_pipeline import answer_question
+from financial_research_copilot.generation.rag_pipeline import (
+    answer_question_with_citations,
+)
 from financial_research_copilot.retrieval.search import top_k_search
 from financial_research_copilot.retrieval.vector_store import VectorStore
 
@@ -22,7 +24,7 @@ model = SentenceTransformer(
     device="cpu",
 )
 
-question = "What risks could affect Apple's gross margins?"
+question = "What factors could affect Apple's gross margin?"
 
 # 3. Encode the user's question
 question_embedding = model.encode(
@@ -43,11 +45,25 @@ for rank, (index, score) in enumerate(retrieveal_result, start=1):
     print(chunks[index].text[:400])
 
 # 5. Extract the corresponding DocumentChunk.text values
-retrieved_chunks = [chunks[index].text for index, score in retrieveal_result]
+# retrieved_chunks = [chunks[index].text for index, score in retrieveal_result]
+retrieved_chunks = [chunks[index] for index, score in retrieveal_result]
 
 # 6. Pass those passages to answer_question()
-answer = answer_question(question, retrieved_chunks)
+# answer = answer_question(question, retrieved_chunks)
+response = answer_question_with_citations(
+    question,
+    retrieved_chunks,
+)
 
 # 7. Print the retrieved passages and generated answer
-print("\nGenerated answer:\n")
-print(answer)
+print("\n=== Generated Answer ===")
+print(response.answer)
+
+print("\n=== Citation Validation ===")
+print(f"Valid citations: {response.citations_valid}")
+
+print("\n=== Supporting Sources ===")
+for source in response.sources:
+    print(f"\n[Source {source.source_number}]")
+    print(f"Chunk ID: {source.chunk_id}")
+    print(f"Text: {source.text[:500]}")
