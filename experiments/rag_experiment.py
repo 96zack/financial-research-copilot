@@ -3,7 +3,7 @@ from pathlib import Path
 from sentence_transformers import SentenceTransformer
 
 from financial_research_copilot.generation.rag_pipeline import (
-    answer_question_with_citations,
+    answer_question_structured,
 )
 from financial_research_copilot.retrieval.search import top_k_search
 from financial_research_copilot.retrieval.vector_store import VectorStore
@@ -40,9 +40,9 @@ retrieveal_result = top_k_search(
 )
 
 # optional
-for rank, (index, score) in enumerate(retrieveal_result, start=1):
-    print(f"\n[Source {rank}] Similarity: {score:.4f}")
-    print(chunks[index].text[:400])
+# for rank, (index, score) in enumerate(retrieveal_result, start=1):
+#     print(f"\n[Source {rank}] Similarity: {score:.4f}")
+#     print(chunks[index].text[:400])
 
 # 5. Extract the corresponding DocumentChunk.text values
 # retrieved_chunks = [chunks[index].text for index, score in retrieveal_result]
@@ -50,17 +50,19 @@ retrieved_chunks = [chunks[index] for index, score in retrieveal_result]
 
 # 6. Pass those passages to answer_question()
 # answer = answer_question(question, retrieved_chunks)
-response = answer_question_with_citations(
+response = answer_question_structured(
     question,
     retrieved_chunks,
 )
 
 # 7. Print the retrieved passages and generated answer
-print("\n=== Generated Answer ===")
-print(response.answer)
+print("\n=== Structured Answer ===")
+print(response.result.answer)
 
-print("\n=== Citation Validation ===")
-print(f"Valid citations: {response.citations_valid}")
+print("\n=== Structured Metadata ===")
+print(f"Cited sources: {response.result.cited_sources}")
+print(f"Insufficient evidence: {response.result.insufficient_evidence}")
+print(f"Citations valid: {response.citations_valid}")
 
 print("\n=== Supporting Sources ===")
 for source in response.sources:
