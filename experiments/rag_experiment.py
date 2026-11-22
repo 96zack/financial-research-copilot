@@ -2,8 +2,18 @@ from pathlib import Path
 
 from sentence_transformers import SentenceTransformer
 
+from financial_research_copilot.evaluation.citation_metrics import (
+    citation_coverage,
+    citation_precision,
+)
+from financial_research_copilot.evaluation.grounding import (
+    abstention_correct,
+    grounding_score,
+)
+from financial_research_copilot.evaluation.grounding_judge import evaluate_grounding
 from financial_research_copilot.generation.rag_pipeline import (
     answer_question_structured,
+    format_context,
 )
 from financial_research_copilot.retrieval.search import top_k_search
 from financial_research_copilot.retrieval.vector_store import VectorStore
@@ -24,7 +34,8 @@ model = SentenceTransformer(
     device="cpu",
 )
 
-question = "What factors could affect Apple's gross margin?"
+# question = "What factors could affect Apple's gross margin?"
+question = "What exact gross margin will Apple report in fiscal 2028?"
 
 # 3. Encode the user's question
 question_embedding = model.encode(
@@ -50,22 +61,51 @@ retrieved_chunks = [chunks[index] for index, score in retrieveal_result]
 
 # 6. Pass those passages to answer_question()
 # answer = answer_question(question, retrieved_chunks)
-response = answer_question_structured(
+rag_response = answer_question_structured(
     question,
     retrieved_chunks,
 )
 
-# 7. Print the retrieved passages and generated answer
-print("\n=== Structured Answer ===")
-print(response.result.answer)
+answer = rag_response.result.answer
+sources = rag_response.sources
 
-print("\n=== Structured Metadata ===")
-print(f"Cited sources: {response.result.cited_sources}")
-print(f"Insufficient evidence: {response.result.insufficient_evidence}")
-print(f"Citations valid: {response.citations_valid}")
+# 1. Citation coverage
+coverage = citation_coverage(answer)
 
-print("\n=== Supporting Sources ===")
-for source in response.sources:
-    print(f"\n[Source {source.source_number}]")
-    print(f"Chunk ID: {source.chunk_id}")
-    print(f"Text: {source.text[:500]}")
+# 2. Citation precision
+available_source_numbers = {source.source_number for source in sources}
+precision = citation_precision(answer, available_source_numbers)
+
+# 3. Grounding evaluation
+context = format_context([source.text for source in sources])
+
+grounding_evaluation = evaluate_grounding(
+    answer=answer,
+    context=context,
+)
+
+score = grounding_score(grounding_evaluation)
+
+print("\n=== RAG Quality Evaluation ===")
+print(f"Citation coverage: {coverage:.2%}")
+print(f"Citation precision: {precision:.2%}")
+print(f"Grounding score: {score:.2%}")
+print(f"Citations valid: {rag_response.citations_valid}")
+print(f"Insufficient evidence: {rag_response.result.insufficient_evidence}")
+
+print("\n=== Claim-Level Evaluation ===")
+
+for index, claim in enumerate(grounding_evaluation.claims, start=1):
+    print(f"\nClaim {index}: {claim.claim}")
+    print(f"Sources: {claim.cited_sources}")
+    print(f"Supported: {claim.supported}")
+    print(f"Reason: {claim.explanation}")
+
+expected_abstention = True
+
+abstention_passed = abstention_correct(
+    predicted_insufficient_evidence=rag_response.result.insufficient_evidence,
+    expected_abstention=expected_abstention,
+)
+
+print(f"Abstention correct: {abstention_passed}")
