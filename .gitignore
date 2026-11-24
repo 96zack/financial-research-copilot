@@ -6,6 +6,15 @@ dist/
 wheels/
 *.egg-info
 /data/
+.env
 
 # Virtual environments
 .venv
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Generated data
+data/
