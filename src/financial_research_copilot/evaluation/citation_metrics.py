@@ -6,7 +6,10 @@ def citation_coverage(answer: str) -> float:
 
     # TODO 1: Split the answer into sentences.
     # Hint: re.split(r"(?<=[.!?])\s+", answer.strip())
-    sen_list = re.split(r"(?<=[.!?])\s+", answer.strip())
+    sen_list = re.split(
+        r"(?<=[.!?])\s+(?!\[Source \d+\])",
+        answer.strip(),
+    )
 
     # TODO 2: Remove empty sentences.
     non_empty_sen_list = [s for s in sen_list if s]
